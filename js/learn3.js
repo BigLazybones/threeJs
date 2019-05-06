@@ -4,11 +4,13 @@ window.onload = function(){
     initScene();    //构建场景
     initLight();    //构建灯光
     initObject();   //构建对象
+    initTween();    //初始化动画库
     animation();    //创建动画
 }
 
 //构建渲染器
 var renderer;
+var stats;
 function initThree(){
     width = window.innerWidth;
     height = window.innerHeight;
@@ -19,6 +21,12 @@ function initThree(){
     renderer.setSize(width,height);
     document.body.appendChild(renderer.domElement);
     renderer.setClearColor(0xFFFFFF, 1.0);
+
+    stats = new Stats();
+    stats.domElement.style.position = "absolute";
+    stats.domElement.style.left = "0px";
+    stats.domElement.style.top = "0px";
+    document.body.appendChild(stats.domElement);
 }
 
 //构建相机
@@ -68,14 +76,26 @@ function initObject(){
     scene.add(mesh);
 }   
 
+//初始化动画库
+function initTween(){
+    new TWEEN.Tween(camera.position).to({
+        x: 400
+    },3000).repeat(Infinity).start();
+}
+
 //创建动画
 function animation(){
+    stats.begin();
     //一、改变相机的位置，让物体移动
     // camera.position.x += 1;
 
     //二、改变物体自身的位置，让物体移动
-    mesh.position.x-=1;
+    // mesh.position.x-=1;
+
+    TWEEN.update();
 
     renderer.render(scene, camera);
     requestAnimationFrame(animation);
+
+    stats.end();
 }
