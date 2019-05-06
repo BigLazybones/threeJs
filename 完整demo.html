@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>完整demo</title>
+    <!--需要的基本JS库-->
+    <script src="js/three.min.js"></script>
+    <!--给body加入一个样式，边框为0（零，不显示边框）；滚动条隐藏-->
+    <style type="text/css">
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <!--定义一个JQuery函数，所有的WebGL操作展示将在该函数中进行-->
+    <script type="text/javascript">
+        window.onload = function () {
+            //构建场景
+            var scene = new THREE.Scene();
+
+            //建立相机，查看场景,透视相机
+            var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            
+            //构建渲染器，进行渲染
+            var renderer = new THREE.WebGLRenderer();
+            //渲染背景色
+            renderer.setClearColor(0xAAFFCC);
+            //渲染尺寸
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            //添加一个辅助坐标轴
+            var axes = new THREE.AxisHelper(200);
+            scene.add(axes);
+
+            //构建一个平面，物体将会放置在这个平面上
+            //平面尺寸，100x60，宽度方向平分几分，高度方向平分几分，如果参数最后2位不是（1,1），平面会显示为网格平面
+            var planeGeometry = new THREE.PlaneGeometry(80, 30, 10, 10);
+            //平面材质,仅仅指定颜色 0xcccccc
+            var planeMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc });
+            //有尺寸和材质构建一个平面
+            var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            //把平面选择-90°，方便观察
+            plane.rotation.x = -0.5 * Math.PI;
+            //指定平面的位置
+            plane.position.x = 0;
+            plane.position.y = 0;
+            plane.position.z = 0;
+            //把平面加入到场景中
+            scene.add(plane);
+            //建立物体，一个立方体，一个球体
+            //建立一个立方体
+            //指定立方体的几何尺寸，长宽高，不包括位置
+            var cubeGeometry = new THREE.CubeGeometry(4, 4, 4);
+            //指定立方体的材质，仅仅指定颜色：0xFF0000，是否使用线框模式显示：是
+            var cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000, wireframe: true });
+            //以给定的几何尺寸和材质构建一个立方体
+            var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+            //指定立方体的具体位置xyz
+            cube.position.x = -2;
+            cube.position.y = 2;
+            cube.position.z = 0;
+            //把建立的立方体放入场景
+            scene.add(cube);
+
+            //建立一个球体sphere
+            //指定球体的几何尺寸，不包括位置；最后2个参数感觉是指定网格密度
+            var sphereGeometry = new THREE.SphereGeometry(4, 30, 30);
+            //指定球体材质，仅仅指定颜色：0xFF0000，是否以线框形式显示：是
+            var sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+            //以给定的几何尺寸和材质，建立一个球体
+            var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            //指定球体的位置 X Y Z
+            sphere.position.x = 20;
+            sphere.position.y = 4;
+            sphere.position.z = 0;
+            //把建立的球体加入到场景中
+            scene.add(sphere);
+
+            //指定相机的位置和方向，决定我们在场景中如何看，能看到什么
+            camera.position.x = -20;
+            camera.position.y = 30;
+            camera.position.z = 50;
+            camera.lookAt(scene.position);
+
+            //把渲染到的东西输出body
+            document.body.appendChild(renderer.domElement);
+            //利用渲染器以给定的相机去渲染场景
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+
+</html>
