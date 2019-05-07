@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,11 +15,19 @@
             margin: 0;
             overflow: hidden;
         }
+        div{
+            text-align: center;
+        }
     </style>
 </head>
+
 <body>
-    
+    <div>
+        <button onclick="usePerspectiveCamera()">使用透视投影相机</button>
+        <button onclick="useOrthographicCamera()">正投影相机</button>
+    </div>
 </body>
+
 </html>
 
 <script src="js/learn4.js"></script>

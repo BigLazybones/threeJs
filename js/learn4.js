@@ -1,25 +1,25 @@
-window.onload = function(){
-    initThree();    //构建渲染器
-    initCamera();   //构建相机
-    initScene();    //构建场景
-    initLight();    //构建灯光
-    initObject();   //构建对象
-    initTween();    //初始化动画库
-    createUI();     //创建UI界面
-    animation();    //创建动画
+window.onload = function () {
+    initThree(); //构建渲染器
+    initCamera(); //构建相机
+    initScene(); //构建场景
+    initLight(); //构建灯光
+    initObject(); //构建对象
+    createUI(); //创建UI界面
+    animation(); //创建动画
 }
 
 //构建渲染器
 var renderer;
 var stats;
-function initThree(){
+
+function initThree() {
     width = window.innerWidth;
     height = window.innerHeight;
-    renderer = new THREE.WebGLRenderer({   //初始化渲染器
-        antialias: true    //抗锯齿
+    renderer = new THREE.WebGLRenderer({ //初始化渲染器
+        antialias: true //抗锯齿
     });
 
-    renderer.setSize(width,height);
+    renderer.setSize(width, height);
     document.body.appendChild(renderer.domElement);
     renderer.setClearColor(0xFFFFFF, 1.0);
 
@@ -32,75 +32,90 @@ function initThree(){
 
 //构建相机
 var camera;
-function initCamera(){
+
+function initCamera() {
+    usePerspectiveCamera();
+}
+
+//使用透视投影相机
+function usePerspectiveCamera() {
     //透视投影相机（远景投影相机）
-    camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 10000);
+    camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 10000);
     camera.position.x = 0;
     camera.position.y = 0;
     camera.position.z = 1000;
     //camera.up：坐标轴向上方向，默认（0，1，0）。PS：要设置在camera.lookAt前才有效
-    camera.up.x = 0;  
+    camera.up.x = 0;
     camera.up.y = 1;
     camera.up.z = 0;
     //camera.lookAt：相机焦点方向，默认为Z轴负半轴方向
-    camera.lookAt(0,0,0); 
+    camera.lookAt(0, 0, 0);
+}
 
-    //正投影相机（正交投影相机）
-    // camera = new THREE.OrthographicCamera(width/-2,width/2,height/2,height/-2,10,1000);
-    // camera.position.x = 0;
-    // camera.position.y = 0;
-    // camera.position.z = 500;
-    // camera.up.x = 0;  
-    // camera.up.y = 1;
-    // camera.up.z = 0;
-    // camera.lookAt(0,0,0); 
+//使用正投影相机
+function useOrthographicCamera() {
+    //正投影相机（ 正交投影相机）
+    camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 10, 1000);
+    camera.position.x = 0;
+    camera.position.y = 0;
+    camera.position.z = 400;
+    camera.up.x = 0;
+    camera.up.y = 1;
+    camera.up.z = 0;
+    camera.lookAt(0, 0, 0);
 }
 
 //构建场景
 var scene;
-function initScene(){
+
+function initScene() {
     scene = new THREE.Scene();
 
     //添加一个辅助坐标轴
     var axes = new THREE.AxisHelper(2000);
     scene.add(axes);
-}    
+}
 
 //构建灯光
 var light;
-function initLight(){
+
+function initLight() {
     // light = new THREE.AmbientLight(0xFFFFFF); //环境光,这种光的颜色被应用到全局范围内的所有对象。
     // light.position.set(100, 100, 200);
     // scene.add(light);
-    light = new THREE.PointLight(0x00FF00);  //点光源,使用 MeshLambertMaterial 或 Phong网孔材料(MeshPhongMaterial) 来影响对象。
+    light = new THREE.PointLight(0x00FF00); //点光源,使用 MeshLambertMaterial 或 Phong网孔材料(MeshPhongMaterial) 来影响对象。
     light.position.set(0, 0, 300);
     scene.add(light);
 }
 
 //构建对象
 var mesh;
-function initObject(){
-    var geometry = new THREE.CylinderGeometry(100, 150, 400, 30);  //创建一个圆柱体
-    var material = new THREE.MeshLambertMaterial({});  //一种非发光材质
-    mesh = new THREE.Mesh(geometry, material);   //新建网孔对象的基类
-    mesh.position = new THREE.Vector3(0,0,0);   //三维向量
-    scene.add(mesh);
-}   
 
-//初始化动画库
-function initTween(){
-    new TWEEN.Tween(mesh.position).to({
-        z: -400
-    },3000).repeat(Infinity).start();
+function initObject() {
+    var geometry = new THREE.CylinderGeometry(0, 150, 400, 30); //创建一个圆柱体
+    var material = new THREE.MeshLambertMaterial({}); //一种非发光材质
+    mesh = new THREE.Mesh(geometry, material); //新建网孔对象的基类
+    mesh.position = new THREE.Vector3(0, 0, 0); //三维向量
+    scene.add(mesh);
 }
 
 //创建UI界面
-function createUI(){
-    
-}     
+var param;
+
+function createUI() {
+    var ParamObj = function () {
+        this.fov = 45;
+        this.positionZ = -400;
+    }
+
+    param = new ParamObj();
+    var gui = new dat.GUI();
+    gui.add(param, "fov", 1, 180).name("透视相机视角");
+    gui.add(param, "positionZ", -500, 0).name("物体在Z轴上的位置");
+}
 
 //创建动画
-function animation(){
+function animation() {
     stats.begin();
     //一、改变相机的位置，让物体移动
     // camera.position.x += 1;
@@ -108,10 +123,23 @@ function animation(){
     //二、改变物体自身的位置，让物体移动
     // mesh.position.x-=1;
 
-    TWEEN.update();
+    changeFov();
+
+    changePositionZ();
 
     renderer.render(scene, camera);
     requestAnimationFrame(animation);
 
     stats.end();
+}
+
+//改变视角
+function changeFov() {
+    camera.fov = param.fov;
+    camera.updateProjectionMatrix();
+}
+
+//改变物体在Z轴上的位置
+function changePositionZ(){
+    mesh.position.z = param.positionZ;
 }
