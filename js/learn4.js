@@ -55,7 +55,7 @@ function usePerspectiveCamera() {
 //使用正投影相机
 function useOrthographicCamera() {
     //正投影相机（ 正交投影相机）
-    camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 10, 1000);
+    camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2,  0.1, 10000);
     camera.position.x = 0;
     camera.position.y = 0;
     camera.position.z = 400;
@@ -111,7 +111,7 @@ function createUI() {
     param = new ParamObj();
     var gui = new dat.GUI();
     gui.add(param, "fov", 1, 180).name("透视相机视角");
-    gui.add(param, "positionZ", -500, 0).name("物体在Z轴上的位置");
+    gui.add(param, "positionZ", -1000, 0).name("物体在Z轴上的位置");
 }
 
 //创建动画
