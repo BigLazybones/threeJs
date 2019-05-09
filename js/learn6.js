@@ -63,27 +63,26 @@ function initScene() {
 
 //创建UI界面
 var param;
-
 function createUI() {
     var ParamObj = function () {
         this.x = 0;
         this.y = 0;
         this.z = 0;
-        this.intensity = 1;
+        this.decay = 1;
     }
     param = new ParamObj();
     var gui = new dat.GUI();
-    gui.add(param, "x", -10000, 10000).name("平行光X轴");
-    gui.add(param, "y", -10000, 10000).name("平行光Y轴");
-    gui.add(param, "z", -10000, 10000).name("平行光Z轴");
-    gui.add(param, "intensity", 0, 1).name("平行光强度");
+    gui.add(param, "x", -2000, 2000).name("点光源X的位置");
+    gui.add(param, "y", -2000, 2000).name("点光源Y的位置");
+    gui.add(param, "z", -2000, 2000).name("点光源Z的位置");
+    gui.add(param, "decay", 0, 1).name("衰减");
 }
 
 //构建灯光
 var light;
 
 function initLight() {
-    light = new THREE.DirectionalLight(0xFF0000, param.intensity); //平行光源,使用 MeshLambertMaterial 或 Phong网孔材料(MeshPhongMaterial) 来影响对象。
+    light = new THREE.PointLight(0xFF00000,1,1000, param.decay); //点光源,使用 MeshLambertMaterial 或 Phong网孔材料(MeshPhongMaterial) 来影响对象。
     light.position.set(param.x, param.y, param.z);
     scene.add(light);
 }
@@ -148,7 +147,7 @@ function animation() {
     //二、改变物体自身的位置，让物体移动
     // mesh.position.x-=1;
     light.position.set(param.x, param.y, param.z);
-    light.intensity = param.intensity;
+    light.decay = param.decay;
 
     renderer.render(scene, camera);
     requestAnimationFrame(animation);
