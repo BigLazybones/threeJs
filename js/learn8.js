@@ -56,20 +56,16 @@ function initLight(){
 var mesh;
 var textureName = 1;
 function initObject(){
+    //创建一个立方体的几何体
+    var geometry = new THREE.SphereBufferGeometry(0.25, 60, 60);
+
     //获取纹理
     var loader = new THREE.TextureLoader();
-    var texture = loader.load("../texture/" + textureName + '.png');
-
-    //然后创建一个phong材质来处理着色，并传递给纹理映射
-    var material = new THREE.MeshPhongMaterial({map:texture});
-
-    //创建一个立方体的几何体
-    var geometry = new THREE.CubeGeometry(1, 1, 1);
-
-     //将集合体和材质放到一个网格中
-     mesh = new THREE.Mesh(geometry, material);
-
-     scene.add(mesh);
+    var texture = loader.load("../texture/" + textureName + '.png', function(){
+        var material = new THREE.MeshPhongMaterial({map:texture});
+        mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+    });
 }
 
 var isChange = false;
@@ -77,15 +73,14 @@ var isStop = false;
 function animation(){
     stats.begin();
 
-    if(!isStop){
-        mesh.rotation.x += 0.01;
+    if(!isStop && mesh){
         mesh.rotation.y += 0.01;
     }
 
     if(isChange){
         isChange = !isChange;
         
-        if(textureName < 3){
+        if(textureName < 4){
             textureName++;
         }else{
             textureName = 1;
